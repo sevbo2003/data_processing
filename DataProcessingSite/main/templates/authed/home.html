@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h2>Dashboard</h2>
+</div>
+
+<div class="container d-flex flex-column mb-3 align-items-center">
+    <dev class="list-group text-center mt-5">
+        <a type="button" class="btn btn-lg py-2 px-4 list-group-item list-group-item-action" href="{% url 'atc' %}">
+            ATC Code Page
+        </a>
+        <a type="button" class="btn btn-lg list-group-item list-group-item-action" href="{% url 'presentations' %}">
+            Presentations page
+        </a>
+        <a type="button" class="btn btn-lg list-group-item list-group-item-action" href="{% url 'active_ingredients' %}">
+            Active Ingredients
+        </a>
+    </dev>
+    
+    <div class="list-group w-50 text-center mt-5">
+        <a type="button" class="btn py-2 px-4 list-group-item list-group-item-action" href="{% url 'atc' %}">
+            German
+        </a>
+        <a type="button" class="btn py-2 px-4 list-group-item list-group-item-action" href="{% url 'atc' %}">
+            Tajik
+        </a>
+        <a type="button" class="btn py-2 px-4 list-group-item list-group-item-action" href="{% url 'atc' %}">
+            Icelandic
+        </a>
+    </div>
+</div>
+
+
+{% endblock %}

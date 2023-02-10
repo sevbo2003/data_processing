@@ -1,0 +1,9 @@
+**/deploy/
+**/media/
+**migrations/
+**/__pycache__/
+DataProcessingSite/static
+.venv
+README.md
+**/.env
+venv/
