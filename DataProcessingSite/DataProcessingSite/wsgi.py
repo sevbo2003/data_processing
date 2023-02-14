@@ -16,7 +16,7 @@ d_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
 dotenv.load_dotenv(
     d_file
 )
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'DataProcessingSite.settings.staging')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'DataProcessingSite.settings.production')
 
 if os.getenv('DJANGO_SETTINGS_MODULE'):
     os.environ['DJANGO_SETTINGS_MODULE'] = os.getenv('DJANGO_SETTINGS_MODULE')
