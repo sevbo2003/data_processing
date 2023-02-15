@@ -7,7 +7,7 @@ import dotenv
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'DataProcessingSite.settings.production')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'DataProcessingSite.settings.local')
 
     if os.getenv('DJANGO_SETTINGS_MODULE'):
         os.environ['DJANGO_SETTINGS_MODULE'] = os.getenv('DJANGO_SETTINGS_MODULE')

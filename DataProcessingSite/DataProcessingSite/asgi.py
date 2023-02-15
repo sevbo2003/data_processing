@@ -17,7 +17,7 @@ dotenv.load_dotenv(
     d_file
 )
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'DataProcessingSite.settings.staging')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'DataProcessingSite.settings.local')
 
 if os.getenv('DJANGO_SETTINGS_MODULE'):
     os.environ['DJANGO_SETTINGS_MODULE'] = os.getenv('DJANGO_SETTINGS_MODULE')
