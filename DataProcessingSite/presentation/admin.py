@@ -1,3 +1,24 @@
 from django.contrib import admin
+from .models import *
 
-# Register your models here.
+
+class EnglishNameAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+    ordering = ('-id',)
+    list_per_page = 25
+
+
+class LanguageAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+    ordering = ('-id',)
+    list_per_page = 25
+
+
+class PresentationLanguageAdmin(admin.ModelAdmin):
+    list_display = ('language', 'english_name', 'name')
+    search_fields = ('language', 'english_name', 'name')
+    ordering = ('-id',)
+    list_per_page = 25
+    
