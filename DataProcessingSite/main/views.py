@@ -5,19 +5,10 @@ from django.http import FileResponse
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, render, redirect
-from .forms import (
-    ATCForm,
-    LanguageForm,
-    PresentationForm,
-    ActiveIngredientForm
-)
-from .models import (
-    ATC,
-    Presentation,
-    Language,
-    ActiveIngredient
-)
+from .forms import ATCForm, LanguageForm, PresentationForm, ActiveIngredientForm
+from .models import ATC, Presentation, Language, ActiveIngredient
 from presentation.utils import ReadCsvAndSaveInDatabase
+from atc.utils import ReadAtcCsvAndSaveInDatabase
 
 
 class HomeView(LoginRequiredMixin, View):
@@ -57,6 +48,7 @@ class AtcView(LoginRequiredMixin, View):
         form = ATCForm(request.POST, request.FILES, instance=file)
         if form.is_valid():
             form.save()
+            ReadAtcCsvAndSaveInDatabase(form.instance.file.path)
         return redirect(reverse('atc'))
 
 
@@ -98,8 +90,7 @@ class PresentationsView(LoginRequiredMixin, View):
             form = PresentationForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            file = Presentation.objects.last()
-            ReadCsvAndSaveInDatabase(file.file.path)
+            ReadCsvAndSaveInDatabase(form.instance.file.path)
         return redirect(reverse('presentations'))
 
 
