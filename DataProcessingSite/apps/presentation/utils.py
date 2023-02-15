@@ -41,10 +41,11 @@ class ReadCsvAndSaveInDatabase:
                     english_name = row[1].text
                     language = head.text
                     name = row[pos].text
-                    english_name, _ = EnglishName.objects.get_or_create(name=english_name)
-                    language, _ = Language.objects.get_or_create(name=language)
-                    PresentationLanguage.objects.get_or_create(
-                        english_name=english_name, language=language, name=name)
+                    if name is not None and name != '' and name != 'NaN':
+                        english_name, _ = EnglishName.objects.get_or_create(name=english_name)
+                        language, _ = Language.objects.get_or_create(name=language)
+                        PresentationLanguage.objects.get_or_create(
+                            english_name=english_name, language=language, name=name)
 
     def __str__(self):
         return self.file_path
