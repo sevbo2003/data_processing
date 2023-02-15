@@ -16,7 +16,7 @@ class EnglishName(models.Model):
     
     class Meta:
         verbose_name_plural = "English Names"
-        ordering = ['-id']
+        ordering = ['id']
 
 
 class Language(models.Model):
@@ -27,11 +27,11 @@ class Language(models.Model):
     
     class Meta:
         verbose_name_plural = "Languages"
-        ordering = ['-id']
+        ordering = ['id']
 
 
 class PresentationLanguage(models.Model):
-    lagnuage = models.ForeignKey(Language, on_delete=models.CASCADE)
+    language = models.ForeignKey(Language, on_delete=models.CASCADE)
     english_name = models.ForeignKey(EnglishName, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
 
@@ -40,4 +40,4 @@ class PresentationLanguage(models.Model):
     
     class Meta:
         verbose_name_plural = "Presentation Languages"
-        ordering = ['-id']
+        ordering = ['id']
