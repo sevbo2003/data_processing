@@ -9,3 +9,11 @@ class AtcAdmin(admin.ModelAdmin):
     ordering = ('atc_code',)
 
 admin.site.register(Atc, AtcAdmin)
+
+
+class AtcLanguageAdmin(admin.ModelAdmin):
+    list_display = ('atc', 'language', 'name')
+    search_fields = ('atc', 'language', 'name')
+    list_filter = ('atc', 'language', 'name')
+    ordering = ('atc', 'language', 'name')
+    
