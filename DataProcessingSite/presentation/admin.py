@@ -8,6 +8,8 @@ class EnglishNameAdmin(admin.ModelAdmin):
     ordering = ('-id',)
     list_per_page = 25
 
+admin.site.register(EnglishName, EnglishNameAdmin)
+
 
 class LanguageAdmin(admin.ModelAdmin):
     list_display = ('name',)
@@ -15,10 +17,13 @@ class LanguageAdmin(admin.ModelAdmin):
     ordering = ('-id',)
     list_per_page = 25
 
+admin.site.register(Language, LanguageAdmin)
+
 
 class PresentationLanguageAdmin(admin.ModelAdmin):
-    list_display = ('language', 'english_name', 'name')
+    list_display = ('english_name', 'name')
     search_fields = ('language', 'english_name', 'name')
     ordering = ('-id',)
     list_per_page = 25
     
+admin.site.register(PresentationLanguage, PresentationLanguageAdmin)
