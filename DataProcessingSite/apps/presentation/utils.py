@@ -1,11 +1,7 @@
-from presentation.models import EnglishName, Language, PresentationLanguage
-from main.models import Presentation
-from main.csv_xl import FileReader
+from apps.presentation.models import EnglishName, Language, PresentationLanguage
+from apps.main.csv_xl import FileReader
 from lxml import etree
 from xml.etree import ElementTree
-import uuid
-import os
-import pandas as pd
 
 
 class ReadCsvAndSaveInDatabase:

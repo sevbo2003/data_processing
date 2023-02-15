@@ -1,5 +1,5 @@
 from django.db import models
-from presentation.models import Language
+from apps.presentation.models import Language
 
 
 class Atc(models.Model):

@@ -7,8 +7,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, render, redirect
 from .forms import ATCForm, LanguageForm, PresentationForm, ActiveIngredientForm
 from .models import ATC, Presentation, Language, ActiveIngredient
-from presentation.utils import ReadCsvAndSaveInDatabase
-from atc.utils import ReadAtcCsvAndSaveInDatabase
+from apps.presentation.utils import ReadCsvAndSaveInDatabase
+from apps.atc.utils import ReadAtcCsvAndSaveInDatabase
 
 
 class HomeView(LoginRequiredMixin, View):

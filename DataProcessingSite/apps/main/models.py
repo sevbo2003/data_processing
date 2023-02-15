@@ -1,10 +1,8 @@
 import uuid
 from django.db import models
 from lxml import etree
-from xml.etree import ElementTree
 from .csv_xl import FileReader
 import os
-import pandas as pd
 
 
 def user_directory_path(instance, filename):
