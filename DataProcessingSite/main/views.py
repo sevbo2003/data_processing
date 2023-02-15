@@ -17,6 +17,8 @@ from .models import (
     Language,
     ActiveIngredient
 )
+from presentation.utils import ReadCsvAndSaveInDatabase
+
 
 class HomeView(LoginRequiredMixin, View):
     def get(self, request):
@@ -96,6 +98,8 @@ class PresentationsView(LoginRequiredMixin, View):
             form = PresentationForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
+            file = Presentation.objects.last()
+            ReadCsvAndSaveInDatabase(file.file.path)
         return redirect(reverse('presentations'))
 
 
