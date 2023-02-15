@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class AtcConfig(AppConfig):
+class MainConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'atc'
+    name = 'apps.main'
