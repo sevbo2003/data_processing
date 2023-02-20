@@ -4,6 +4,8 @@ from lxml import etree
 from .csv_xl import FileReader
 import os
 
+from django.conf import settings
+
 
 def user_directory_path(instance, filename):
     model_name = instance._meta.model.__name__
@@ -108,40 +110,50 @@ class Language(models.Model):
     output_file = models.FileField(upload_to=user_directory_path, null=True, blank=True)
     last_updated = models.DateTimeField(auto_now=True)
     
-    def output_filename(self,):
-        file_source = self.product_listing_file or self.pricing_file
-        name, ext = os.path.splitext(file_source)
-        ext = ext if file_source else '.csv'
-        return f"{self.name}_output" + ext
+    def output_filename(self):
+        # file_source = self.product_listing_file or self.pricing_file
+        # name, ext = os.path.splitext(file_source)
+        # print("Name___________",self.name)
+        # print(ext)
+        # ext = '.xlsx' if file_source else '.csv'
+        # # return f"{self.name}_output" + ext
+        # return "{0}_output{1}".format(self.name, ext)
+        return "output.xlsx"
 
     def process(self):
-        # read both files
+    # read both files
         product_reader = FileReader(self.product_listing_file.path)
-        product_df = product_reader.df
+        product_df = product_reader.dataframe
         price_reader = FileReader(self.pricing_file.path)
         price_df = price_reader.dataframe
 
         # combine dataframes
         combined_df = product_df.append([price_df])
-        combined_df.to_csv(self.output_filename) if '.csv' in self.product_listing_file else combined_df.to_excel(self.output_filename)
-        output_reader = FileReader(self.output_filename.path)
+        output_file_path = os.path.join(settings.MEDIA_ROOT, self.output_filename())
+        if '.csv' in self.product_listing_file:
+            combined_df.to_csv(output_file_path)
+        else:
+            combined_df.to_excel(output_file_path)
+        output_reader = FileReader(output_file_path)
         output_df = output_reader.dataframe
 
         # registration numbers are in the first column
         reg_num_col = product_df.iloc[:, 1]
 
         # lookup active ingredients
-        self.lookup_and_translate(output_reader, 'atc_code',
-                                  'active_ingredient_1', ATC_Entry,
+        self.lookup_and_translate(output_reader, 'ATC',
+                                'active_ingredient_1', ATC_Entry,
                                 )
         
         # lookup presentation
         self.lookup_and_translate(output_reader, 'presentation',
-                                  'presentation', Presentation_Entry,
+                                'presentation', Presentation_Entry,
                                 )
 
         # save file
         output_reader.write_file()
+        self.processed = True
+        self.save()
 
     def lookup_and_translate(self, file_reader:FileReader, query_col, translate_col, model_query):
         file_reader.find_or_create_column(translate_col)
@@ -150,14 +162,14 @@ class Language(models.Model):
             atc = df[query_col][ind]
             # look for this in ATC
             if model_query == ATC_Entry:
-                translation = model_query.objects.filter(language="English", code=atc)
+                translation = model_query.objects.filter(language=1, code=atc)
             else:
-                translation = model_query.objects.filter(language="English", presentation=atc)
+                translation = model_query.objects.filter(language=1, presentation=atc)
             translation = translation.first() if translation else file_reader.NULL_CELL
-            file_reader.update_value(translate_col, ind)
+            file_reader.update_value(translate_col, ind, translation)
 
     def update_ATC(self,):
-        atc = ATC.objects.first()
+        atc = ATC.objects.last()
 
         # iterate over rows in input file
         input_reader = FileReader(self.atc_file.path)
@@ -165,7 +177,7 @@ class Language(models.Model):
 
         for ind in df.index:
             input_dict = {
-                "ATC": df['atc_code'][ind],
+                "ATC": df['ATC'][ind],
                 self.name: df.iloc[ind, 1],
             }
         self.update_file(self.atc_file, input_dict, ATC, 'ATC')

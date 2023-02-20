@@ -152,18 +152,52 @@ class UploadCsvView(LoginRequiredMixin, View):
             }
         )
 
-
-class LanguageView(LoginRequiredMixin, View):
-    def get(self, request, language):
-        language = get_object_or_404(Language, name=language)
+class LanguageCreateView(LoginRequiredMixin, View):
+    def get(self, request):
         template_name = "authed/languages.html"
         form = LanguageForm()
         return render(request, template_name,
-            {'form': form,
-             'language': language,
-             'languages': Language.objects.all()
+            {
+                'languages': Language.objects.all(),
+                'form': form,
             }
         )
+    
+    def post(self, request):
+        template_name = "authed/languages.html"
+        form = LanguageForm(request.POST, request.FILES)
+        print("form is valid: ", form.is_valid())
+        if form.is_valid():
+            form.save()
+        return redirect(reverse('home'))
+
+class LanguageView(LoginRequiredMixin, View):
+    def get(self, request, language):
+        template_name = "authed/languages.html"
+        form = LanguageForm()
+        language = get_object_or_404(Language, name=language)
+        return render(request, template_name,
+            {
+                'languages': Language.objects.all(),
+                'language': language,
+                'form': form,
+            }
+        )
+    
+    def post(self, request, language):
+        template_name = "authed/languages.html"
+        language = get_object_or_404(Language, name=language)
+        form = LanguageForm(request.POST, instance=language)
+        print("form is valid: ", form.is_valid())
+        if form.is_valid():
+            file = form.save(commit=False)
+            file.processed = True
+            file.save()
+            # print(file.output_file)
+            print(file.processed)
+        return redirect(reverse('languages', kwargs={'language': language.name}))
+    
+    
 
 class DownloadLanguageFileView(LoginRequiredMixin, View):
     def get(self, request, language):

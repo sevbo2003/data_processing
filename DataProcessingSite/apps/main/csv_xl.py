@@ -67,7 +67,7 @@ class FileReader:
         else:
             self.dataframe.to_excel(self.output_filename,
                                         header=0, )
-        return
+        return format(self.output_filename)
     
     def query_by_column(self, column, query):
         """search for row where specific column == value"""

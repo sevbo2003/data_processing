@@ -3,7 +3,9 @@ from .models import (
     ATC,
     Language,
     Presentation,
-    ActiveIngredient
+    ActiveIngredient,
+    ATC_Entry,
+    Presentation_Entry
 )
 
 
@@ -23,3 +25,14 @@ admin.site.register(Presentation, PresentationAdmin)
 class ActiveIngredientAdmin(admin.ModelAdmin):
     pass
 admin.site.register(ActiveIngredient, ActiveIngredientAdmin)
+
+
+class ATC_EntryAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(ATC_Entry, ATC_EntryAdmin)
+
+class Presentation_EntryAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Presentation_Entry, Presentation_EntryAdmin)
