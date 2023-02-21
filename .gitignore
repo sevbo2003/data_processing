@@ -7,3 +7,4 @@ DataProcessingSite/static
 README.md
 **/.env
 venv/
+db.sqlite3

@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "apps.main",
     "apps.presentation",
-    "apps.atc"
+    "apps.atc",
+    "apps.language",
 ]
 
 MIDDLEWARE = [
