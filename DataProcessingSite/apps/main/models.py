@@ -112,10 +112,8 @@ class Language(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
     
     def output_filename(self):
-        file_source = self.product_listing_file or self.pricing_file
+        file_source = self.product_listing_file.path or self.pricing_file.path
         name, ext = os.path.splitext(file_source)
-        print("Name___________",self.name)
-        print(ext)
         ext = '.xlsx' if file_source else '.csv'
         return "{0}_output{1}".format(self.name, ext)
 
