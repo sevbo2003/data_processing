@@ -5,6 +5,7 @@ from .csv_xl import FileReader
 import os
 
 from django.conf import settings
+from apps.language.models import Language, csv_column_names
 
 
 def user_directory_path(instance, filename):
@@ -111,17 +112,15 @@ class Language(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
     
     def output_filename(self):
-        # file_source = self.product_listing_file or self.pricing_file
-        # name, ext = os.path.splitext(file_source)
-        # print("Name___________",self.name)
-        # print(ext)
-        # ext = '.xlsx' if file_source else '.csv'
-        # # return f"{self.name}_output" + ext
-        # return "{0}_output{1}".format(self.name, ext)
-        return "output.xlsx"
+        file_source = self.product_listing_file or self.pricing_file
+        name, ext = os.path.splitext(file_source)
+        print("Name___________",self.name)
+        print(ext)
+        ext = '.xlsx' if file_source else '.csv'
+        return "{0}_output{1}".format(self.name, ext)
 
     def process(self):
-    # read both files
+        # read both files
         product_reader = FileReader(self.product_listing_file.path)
         product_df = product_reader.dataframe
         price_reader = FileReader(self.pricing_file.path)
