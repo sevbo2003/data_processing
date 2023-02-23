@@ -6,6 +6,7 @@ import os
 
 from django.conf import settings
 from apps.language.models import Language, csv_column_names
+import pandas as pd
 
 
 def user_directory_path(instance, filename):
@@ -99,7 +100,7 @@ class ActiveIngredient(models.Model):
         # df = pd.DataFrame(df)
         return df.to_html(classes=['table', 'table-hover', 'table-bordered'])
 
-
+# 2613413
 
 class Language(models.Model):
     name = models.CharField(max_length=125)
@@ -114,7 +115,8 @@ class Language(models.Model):
     def output_filename(self):
         file_source = self.product_listing_file.path or self.pricing_file.path
         name, ext = os.path.splitext(file_source)
-        ext = '.xlsx' if file_source else '.csv'
+        # ext = '.xlsx' if file_source else '.csv'
+        ext = '.csv'
         return "{0}_output{1}".format(self.name, ext)
 
     def process(self):
@@ -125,89 +127,91 @@ class Language(models.Model):
         price_df = price_reader.dataframe
 
         # combine dataframes
-        combined_df = product_df.append([price_df])
+        combined_df = pd.concat([product_df, price_df], ignore_index=True)
         output_file_path = os.path.join(settings.MEDIA_ROOT, self.output_filename())
-        if '.csv' in self.product_listing_file:
-            combined_df.to_csv(output_file_path)
-        else:
-            combined_df.to_excel(output_file_path)
+        # if '.csv' in self.product_listing_file.path:
+        #     combined_df.to_csv(output_file_path)
+        # else:
+        combined_df.to_csv(output_file_path, index=False)
         output_reader = FileReader(output_file_path)
         output_df = output_reader.dataframe
+        
 
         # registration numbers are in the first column
-        reg_num_col = product_df.iloc[:, 1]
+        # reg_num_col = product_df.iloc[:, 1]
 
         # lookup active ingredients
-        self.lookup_and_translate(output_reader, 'ATC',
-                                'active_ingredient_1', ATC_Entry,
-                                )
+        # self.lookup_and_translate(output_reader, 'ATC',
+        #                         'active_ingredient_1', ATC_Entry,
+        #                         )
         
-        # lookup presentation
-        self.lookup_and_translate(output_reader, 'presentation',
-                                'presentation', Presentation_Entry,
-                                )
+        # # lookup presentation
+        # self.lookup_and_translate(output_reader, 'presentation',
+        #                         'presentation', Presentation_Entry,
+        #                         )
 
         # save file
         output_reader.write_file()
         self.processed = True
+        self.output_file = self.output_filename()
         self.save()
 
-    def lookup_and_translate(self, file_reader:FileReader, query_col, translate_col, model_query):
-        file_reader.find_or_create_column(translate_col)
-        df = file_reader.dataframe
-        for ind in df.index:
-            atc = df[query_col][ind]
-            # look for this in ATC
-            if model_query == ATC_Entry:
-                translation = model_query.objects.filter(language=1, code=atc)
-            else:
-                translation = model_query.objects.filter(language=1, presentation=atc)
-            translation = translation.first() if translation else file_reader.NULL_CELL
-            file_reader.update_value(translate_col, ind, translation)
+    # def lookup_and_translate(self, file_reader:FileReader, query_col, translate_col, model_query):
+    #     file_reader.find_or_create_column(translate_col)
+    #     df = file_reader.dataframe
+    #     for ind in df.index:
+    #         atc = df[query_col][ind]
+    #         # look for this in ATC
+    #         if model_query == ATC_Entry:
+    #             translation = model_query.objects.filter(language=1, code=atc)
+    #         else:
+    #             translation = model_query.objects.filter(language=1, presentation=atc)
+    #         translation = translation.first() if translation else file_reader.NULL_CELL
+    #         file_reader.update_value(translate_col, ind, translation)
 
-    def update_ATC(self,):
-        atc = ATC.objects.last()
+    # def update_ATC(self,):
+    #     atc = ATC.objects.last()
 
-        # iterate over rows in input file
-        input_reader = FileReader(self.atc_file.path)
-        df = input_reader.dataframe
+    #     # iterate over rows in input file
+    #     input_reader = FileReader(self.atc_file.path)
+    #     df = input_reader.dataframe
 
-        for ind in df.index:
-            input_dict = {
-                "ATC": df['ATC'][ind],
-                self.name: df.iloc[ind, 1],
-            }
-        self.update_file(self.atc_file, input_dict, ATC, 'ATC')
+    #     for ind in df.index:
+    #         input_dict = {
+    #             "ATC": df['ATC'][ind],
+    #             self.name: df.iloc[ind, 1],
+    #         }
+    #     self.update_file(self.atc_file, input_dict, ATC, 'ATC')
 
-        atc.filereader.write_file()
-        return
+    #     atc.filereader.write_file()
+    #     return
 
-    def update_Presentations(self):
-        presentation = Presentation.objects.first()
-        input_dict = {
-            "Presentation": self.presentation,
-            self.language: self.name,
-        }
-        self.update_file(self.presentation_file, input_dict, presentation, self.language)
-        presentation.filereader.write_file()
-        return
+    # def update_Presentations(self):
+    #     presentation = Presentation.objects.first()
+    #     input_dict = {
+    #         "Presentation": self.presentation,
+    #         self.language: self.name,
+    #     }
+    #     self.update_file(self.presentation_file, input_dict, presentation, self.language)
+    #     presentation.filereader.write_file()
+    #     return
 
-    def update_file(self, input_dict, model_instance, column_name='ATC'):
-        # update ATC/Presentations file whenever this is saved/updated
-        file = model_instance.file
-        model_instance.file_dataframe()
+    # def update_file(self, input_dict, model_instance, column_name='ATC'):
+    #     # update ATC/Presentations file whenever this is saved/updated
+    #     file = model_instance.file
+    #     model_instance.file_dataframe()
 
-        # search for language in columns
-        model_instance.filereader.find_or_create_column(self.name)
+    #     # search for language in columns
+    #     model_instance.filereader.find_or_create_column(self.name)
 
-        # search for row 
-        row = model_instance.filereader.query_by_column(column_name, self.code)
+    #     # search for row 
+    #     row = model_instance.filereader.query_by_column(column_name, self.code)
 
-        # search for cell
-        if row:
-            model_instance.filereader.update_value(column_name, row, self.name)
-        else:
-            model_instance.filereader.new_row(input_dict)
+    #     # search for cell
+    #     if row:
+    #         model_instance.filereader.update_value(column_name, row, self.name)
+    #     else:
+    #         model_instance.filereader.new_row(input_dict)
 
 
     def __str__(self) -> str:

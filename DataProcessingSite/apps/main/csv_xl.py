@@ -28,12 +28,11 @@ class FileReader:
         if ext == self.CSV_EXTENSION:
             self.dataframe = pd.read_csv(self.filename, 
                                         encoding="UTF-8", 
-                                        sep=';',
-                                        header=0, engine="python")
+                                        sep=',', engine="python")
 
         else:
             self.dataframe = pd.read_excel(self.filename,
-                                        header=0)
+                                        header=0, engine='openpyxl')
         self.headers = list(self.dataframe.columns)
         
     def new_column(self, column):
@@ -63,10 +62,10 @@ class FileReader:
         name, ext = os.path.splitext(self.output_filename)
         if ext == self.CSV_EXTENSION:
             self.dataframe.to_csv(self.output_filename,
-                                        sep=';', )
+                                        sep=',')
         else:
             self.dataframe.to_excel(self.output_filename,
-                                        header=0, )
+                                        header=0, engine="python")
         return format(self.output_filename)
     
     def query_by_column(self, column, query):

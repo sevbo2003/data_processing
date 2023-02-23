@@ -48,7 +48,7 @@ class AtcView(LoginRequiredMixin, View):
         form = ATCForm(request.POST, request.FILES, instance=file)
         if form.is_valid():
             form.save()
-            ReadAtcCsvAndSaveInDatabase(form.instance.file.path)
+            # ReadAtcCsvAndSaveInDatabase(form.instance.file.path)
         return redirect(reverse('atc'))
 
 
